@@ -9,10 +9,18 @@ var router = express.Router();
 router.use(bodyParser.json());
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+router.get('/', authenticate.verifyAdmin, function(req, res, next) {
+  if(req.decoded.user.admin) {
+    User.find({}, function (err, users) {
+        if (err) throw err;
+        res.json(users);
+    });
+  }
+  else {
+    return res.status(403).json({status: 'You are not authorized to perform this operation!'});
+  }
 
+});
 
 router.post('/signup', (req, res, next) => {
   User.register(new User({username: req.body.username}),
