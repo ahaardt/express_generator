@@ -3,26 +3,28 @@ const bodyParser = require ('body-parser');
 var User = require ('../models/user');
 var passport = require ('passport');
 var authenticate = require('../authenticate');
+const cors = require('./cors');
 
 var router = express.Router();
 
 router.use(bodyParser.json());
 
 /* GET users listing. */
-router.get('/', authenticate.verifyAdmin, function(req, res, next) {
-  if(req.decoded.user.admin) {
-    User.find({}, function (err, users) {
-        if (err) throw err;
-        res.json(users);
+router.get('/', cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, function(req, res, next) {
+    User.find({})
+        .then((users) => {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application-json');
+            res.json(users);
+        })
+        .catch((err) => {
+            res.statusCode = 500;
+            res.setHeader('Content-Type', 'application-json');
+            res.json(err);
+        });
     });
-  }
-  else {
-    return res.status(403).json({status: 'You are not authorized to perform this operation!'});
-  }
 
-});
-
-router.post('/signup', (req, res, next) => {
+router.post('/signup', cors.corsWithOptions, (req, res, next) => {
   User.register(new User({username: req.body.username}),
     req.body.password, (err, user) => {
     if(err) {
@@ -52,7 +54,7 @@ router.post('/signup', (req, res, next) => {
   });
 });
 
-router.post('/login', passport.authenticate('local'), (req, res) => {
+router.post('/login', cors.corsWithOptions, passport.authenticate('local'), (req, res) => {
 
   var token = authenticate.getToken({_id: req.user._id});
   res.statusCode = 200;
@@ -61,7 +63,7 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
 });
 
 
-router.get('/logout', (req, res) => {
+router.get('/logout', cors.corsWithOptions, (req, res) => {
   if (req.session) {
     req.session.destroy();
     res.clearCookie('session-id');

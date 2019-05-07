@@ -4,6 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var config = require('./config');
+const uploadRouter = require('./routes/uploadRouter');
+
 
 var passport = require('passport');
 var authenticate = require('./authenticate');
@@ -45,6 +47,7 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use('/imageUpload',uploadRouter);
 //app.use(cookieParser('12345-67890-09876-54321'));
 
 /*app.use(session({
