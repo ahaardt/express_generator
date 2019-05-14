@@ -51,6 +51,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use('/imageUpload',uploadRouter);
 app.use('/comments',commentRouter);
+app.use('favorites', favoriteRouter);
 //app.use(cookieParser('12345-67890-09876-54321'));
 
 /*app.use(session({

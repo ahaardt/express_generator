@@ -113,7 +113,7 @@ favoriteRouter
                 if (!favorite) {
                     res.statusCode = 200;
                     res.setHeader('Content-Type', 'application/json');
-                    return res.json(`You have no favorites!`);
+                    return res.json("exsists":false);
                 } else {
                     // if the dish doesn't exist in the list of favorites, return exists as false
                     if (favorite.dishes.indexOf(req.params.dishId) < 0) {
